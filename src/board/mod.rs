@@ -8,7 +8,7 @@ pub struct Board {
 }
 
 /// 一步移动
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Move {
     pub pos_from: (i32, i32),
     pub pos_to: (i32, i32),
@@ -44,6 +44,30 @@ pub enum Side {
 }
 
 impl Board {
+    /// 判断走子是否合法并走子
+    pub fn apply_move(&mut self, mov: Move) -> Result<(), ()> {
+        if self.check_move(mov) {
+            unsafe {
+                self.apply_move_unchecked(mov);
+            }
+            Ok(())
+        } else {
+            Err(())
+        }
+    }
+
+    /// \[不安全\] 走子但不作检查
+    pub unsafe fn apply_move_unchecked(&mut self, mov: Move) {
+        let _ = mov;
+        todo!()
+    }
+
+    /// 检查走子是否合法
+    pub fn check_move(&self, mov: Move) -> bool {
+        let _ = mov;
+        todo!()
+    }
+
     /// 查询某位置是否被占据
     pub fn crossing_occupied(&self, pos: (i32, i32)) -> bool {
         self.get_piece_at(pos).is_some()
@@ -62,6 +86,12 @@ impl Board {
         todo!()
     }
 
+    /// 查询某一方的帅 / 将是否被威胁
+    pub fn general_threatened(&self, side: Side) -> bool {
+        let _ = side;
+        todo!()
+    }
+
     /// 获取记录棋子信息的二维数组
     #[inline(always)]
     pub fn get_board(&self) -> &[[Option<Piece>; 10]; 9] {
@@ -72,6 +102,18 @@ impl Board {
     pub fn get_piece_at(&self, pos: (i32, i32)) -> Option<Piece> {
         debug_assert!(pos.0 >= 0 && pos.0 < 9 && pos.1 >= 0 && pos.1 < 10);
         self.map[pos.0 as usize][pos.1 as usize]
+    }
+
+    /// 获取某位置的所有走法
+    pub fn get_possible_moves_from(&self, from: (i32, i32)) -> Vec<Move> {
+        let _ = from;
+        todo!()
+    }
+
+    /// 获取某方的所有走法
+    pub fn get_possible_moves_of_side(&self, side: Side) -> Vec<Move> {
+        let _ = side;
+        todo!()
     }
 
     /// 获取赢家
