@@ -11,10 +11,12 @@ mod test;
 pub struct Board {
     finished: bool,
     map: [[Option<Piece>; 10]; 9],
+    unmove_records: Vec<UnmoveRecord>,
+    winner: Option<Side>,
 }
 
 /// 一步移动
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Move {
     pub pos_from: (i32, i32),
     pub pos_to: (i32, i32),
@@ -31,6 +33,7 @@ pub struct Piece {
 /// 棋子种类
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PieceKind {
+    帥,
     車,
     馬,
     炮,
@@ -49,12 +52,21 @@ pub enum Side {
     Black,
 }
 
+/// 悔棋记录
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct UnmoveRecord {
+    pos_0: (i32, i32),
+    piece_0: Option<Piece>,
+    pos_1: (i32, i32),
+    piece_1: Option<Piece>,
+}
+
 impl Board {
     /// 判断走子是否合法并走子
-    pub fn apply_move(&mut self, mov: Move) -> Result<(), ()> {
-        if self.check_move(mov) {
+    pub fn apply_move(&mut self, mov: &Move) -> Result<(), ()> {
+        if self.check_move(&mov) {
             unsafe {
-                self.apply_move_unchecked(mov);
+                self.apply_move_unchecked(&mov);
             }
             Ok(())
         } else {
@@ -63,16 +75,34 @@ impl Board {
     }
 
     /// \[不安全\] 走子但不作检查
-    pub unsafe fn apply_move_unchecked(&mut self, mov: Move) {
+    pub unsafe fn apply_move_unchecked(&mut self, mov: &Move) {
         let from = mov.pos_from;
         let to = mov.pos_to;
+        // 检查游戏是否结束
+        match self.map[to.0 as usize][to.1 as usize] {
+            Some(piece_killed) => {
+                if piece_killed.kind == PieceKind::帥 {
+                    // 更新赢家
+                    self.winner = Some(piece_killed.side.other());
+                }
+            }
+            None => {}
+        }
+        // 记录悔棋信息
+        let unmove_record = UnmoveRecord {
+            pos_0: mov.pos_from,
+            piece_0: self.get_piece_at(mov.pos_from),
+            pos_1: mov.pos_to,
+            piece_1: self.get_piece_at(mov.pos_to),
+        };
+        self.unmove_records.push(unmove_record);
+        // 更新棋盘数据
         self.map[from.0 as usize][from.1 as usize] = None;
         self.map[to.0 as usize][to.1 as usize] = mov.turn_into;
-        todo!("record");
     }
 
     /// 检查走子是否合法
-    pub fn check_move(&self, mov: Move) -> bool {
+    pub fn check_move(&self, mov: &Move) -> bool {
         let _ = mov;
         todo!()
     }
@@ -102,7 +132,6 @@ impl Board {
     }
 
     /// 获取记录棋子信息的二维数组
-    #[inline(always)]
     pub fn get_board(&self) -> &[[Option<Piece>; 10]; 9] {
         &self.map
     }
@@ -127,13 +156,12 @@ impl Board {
 
     /// 获取赢家
     pub fn get_winner(&self) -> Option<Side> {
-        todo!()
+        self.winner
     }
 }
 
 impl Side {
     /// 获取另一方
-    #[inline(always)]
     pub fn other(&self) -> Side {
         match self {
             Side::Red => Side::Black,
