@@ -1,9 +1,15 @@
+/*
+ * 模块 board，实现棋盘这个数据结构及一些杂项。
+ * 本文件属于 libdonyeh，使用需遵守 LGPL-3.0 协议。
+ */
+
 #[cfg(test)]
 mod test;
 
 /// 棋盘
 #[derive(Debug, Clone)]
 pub struct Board {
+    finished: bool,
     map: [[Option<Piece>; 10]; 9],
 }
 
@@ -58,8 +64,11 @@ impl Board {
 
     /// \[不安全\] 走子但不作检查
     pub unsafe fn apply_move_unchecked(&mut self, mov: Move) {
-        let _ = mov;
-        todo!()
+        let from = mov.pos_from;
+        let to = mov.pos_to;
+        self.map[from.0 as usize][from.1 as usize] = None;
+        self.map[to.0 as usize][to.1 as usize] = mov.turn_into;
+        todo!("record");
     }
 
     /// 检查走子是否合法
@@ -83,7 +92,7 @@ impl Board {
 
     /// 查询游戏是否结束
     pub fn game_finished(&self) -> bool {
-        todo!()
+        self.finished
     }
 
     /// 查询某一方的帅 / 将是否被威胁
