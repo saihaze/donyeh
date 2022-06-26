@@ -158,6 +158,31 @@ impl Board {
     pub fn get_winner(&self) -> Option<Side> {
         self.winner
     }
+
+    /// 查询范围内棋子数
+    pub fn query_piece_count_between(&self, pos1: (i32, i32), pos2: (i32, i32)) -> u32 {
+        let (left, right) = if pos1.0 < pos2.0 {
+            (pos1.0, pos2.0)
+        } else {
+            (pos2.0, pos1.0)
+        };
+        let (down, up) = if pos1.1 < pos2.1 {
+            (pos1.1, pos2.1)
+        } else {
+            (pos2.1, pos1.1)
+        };
+        debug_assert!(left >= 0 && right < 9);
+        debug_assert!(down >= 0 && up < 10);
+        let mut ret = 0u32;
+        for x in left..right + 1 {
+            for y in down..up + 1 {
+                if self.get_piece_at((x, y)).is_some() {
+                    ret += 1;
+                }
+            }
+        }
+        ret
+    }
 }
 
 impl Side {
