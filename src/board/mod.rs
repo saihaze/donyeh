@@ -33,16 +33,16 @@ pub struct Piece {
 /// 棋子种类
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PieceKind {
-    帥,
-    車,
-    馬,
-    炮,
-    相,
-    仕,
-    中兵,
-    濟兵,
-    庶兵,
-    底兵,
+    帥 = 1,
+    車 = 2,
+    馬 = 3,
+    炮 = 4,
+    相 = 5,
+    仕 = 6,
+    中兵 = 7,
+    濟兵 = 8,
+    庶兵 = 9,
+    底兵 = 10,
 }
 
 /// 阵营
