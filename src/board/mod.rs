@@ -1,3 +1,5 @@
+use std::iter::Chain;
+
 /*
  * 模块 board，实现棋盘这个数据结构及一些杂项。
  * 本文件属于 libdonyeh，使用需遵守 LGPL-3.0 协议。
@@ -142,18 +144,6 @@ impl Board {
         self.map[pos.0 as usize][pos.1 as usize]
     }
 
-    /// 获取某位置的所有走法
-    pub fn get_possible_moves_from(&self, from: (i32, i32)) -> Vec<Move> {
-        let _ = from;
-        todo!()
-    }
-
-    /// 获取某方的所有走法
-    pub fn get_possible_moves_of_side(&self, side: Side) -> Vec<Move> {
-        let _ = side;
-        todo!()
-    }
-
     /// 获取赢家
     pub fn get_winner(&self) -> Option<Side> {
         self.winner
@@ -171,6 +161,7 @@ impl Board {
         } else {
             (pos2.1, pos1.1)
         };
+        // 检查是否在棋盘范围内
         debug_assert!(left >= 0 && right < 9);
         debug_assert!(down >= 0 && up < 10);
         let mut ret = 0u32;
@@ -178,6 +169,29 @@ impl Board {
             for y in down..up + 1 {
                 if self.get_piece_at((x, y)).is_some() {
                     ret += 1;
+                }
+            }
+        }
+        ret
+    }
+
+    /// 查询某位置的所有走法
+    pub fn query_possible_moves_from(&self, from: (i32, i32)) -> impl Iterator<Item = Move> {
+        let mut ret = Vec::<Move>::new();
+        todo!();
+        ret.into_iter()
+    }
+
+    /// 查询某方的所有走法
+    pub fn query_possible_moves_of_side(&self, side: Side) -> impl Iterator<Item = Move> {
+        let mut ret: Box<dyn Iterator<Item = Move>> = Box::new([].into_iter());
+        for x in 0..9 {
+            for y in 0..10 {
+                let from = (x, y);
+                if self.crossing_occupied_by_side(from, side) {
+                    ret = Box::new(self.query_possible_moves_from(from)
+                                            .into_iter()
+                                            .chain(ret));
                 }
             }
         }
