@@ -3,7 +3,7 @@
  * 本文件属于 libdonyeh，使用需遵守 LGPL-3.0 协议。
  */
 
-use crate::board::{Board, Side, Move};
+use crate::board::{Board, Move, Side};
 
 /// 走子决定器接口
 pub trait Decider {

@@ -161,7 +161,7 @@ impl Board {
 
     /// 按照默认开局构建棋盘
     pub fn new() -> Board {
-        let mut map = [[None; 10];9];
+        let mut map = [[None; 10]; 9];
         for (x, kind) in [
             (0, PieceKind::車),
             (1, PieceKind::馬),

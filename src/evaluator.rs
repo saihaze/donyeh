@@ -3,7 +3,7 @@
  * 本文件属于 libdonyeh，使用需遵守 LGPL-3.0 协议。
  */
 
-use crate::board::{Side, Board};
+use crate::board::{Board, Side};
 
 /// 局面评估器接口
 pub trait Evaluator {
