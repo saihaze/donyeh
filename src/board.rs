@@ -3,9 +3,6 @@
  * 本文件属于 libdonyeh，使用需遵守 LGPL-3.0 协议。
  */
 
-#[cfg(test)]
-mod test;
-
 /// 棋盘
 #[derive(Debug, Clone)]
 pub struct Board {
@@ -160,6 +157,37 @@ impl Board {
     /// 获取赢家
     pub fn get_winner(&self) -> Option<Side> {
         self.winner
+    }
+
+    /// 按照默认开局构建棋盘
+    pub fn new() -> Board {
+        let mut map = [[None; 10];9];
+        for (x, kind) in [
+            (0, PieceKind::車),
+            (1, PieceKind::馬),
+            (2, PieceKind::相),
+            (3, PieceKind::仕),
+            (4, PieceKind::帥),
+            (5, PieceKind::仕),
+            (6, PieceKind::相),
+            (7, PieceKind::馬),
+            (8, PieceKind::車),
+        ] {
+            map[x][0] = Some(Piece::new(kind, Side::Red));
+            map[x][9] = Some(Piece::new(kind, Side::Black));
+        }
+        for x in [0, 2, 6, 8] {
+            map[x][3] = Some(Piece::new(PieceKind::庶兵, Side::Red));
+            map[x][6] = Some(Piece::new(PieceKind::庶兵, Side::Black));
+        }
+        map[4][3] = Some(Piece::new(PieceKind::中兵, Side::Red));
+        map[4][6] = Some(Piece::new(PieceKind::中兵, Side::Black));
+        Board {
+            finished: false,
+            map,
+            unmove_records: Vec::new(),
+            winner: None,
+        }
     }
 
     /// 判断位置是否在棋盘内
