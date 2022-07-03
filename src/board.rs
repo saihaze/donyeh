@@ -182,6 +182,10 @@ impl Board {
         }
         map[4][3] = Some(Piece::new(PieceKind::中兵, Side::Red));
         map[4][6] = Some(Piece::new(PieceKind::中兵, Side::Black));
+        map[1][2] = Some(Piece::new(PieceKind::炮, Side::Red));
+        map[7][2] = Some(Piece::new(PieceKind::炮, Side::Red));
+        map[1][7] = Some(Piece::new(PieceKind::炮, Side::Black));
+        map[7][7] = Some(Piece::new(PieceKind::炮, Side::Black));
         Board {
             finished: false,
             map,
