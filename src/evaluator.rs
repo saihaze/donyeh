@@ -16,7 +16,7 @@ pub trait Evaluator {
 pub struct SimpleEvaluator {}
 
 impl SimpleEvaluator {
-    /// 构建
+    /// 构造
     pub fn new() -> SimpleEvaluator {
         SimpleEvaluator {}
     }

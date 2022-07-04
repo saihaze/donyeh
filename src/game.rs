@@ -41,7 +41,7 @@ impl<RD: Decider, BD: Decider> Game<RD, BD> {
         }
     }
 
-    /// 构建
+    /// 构造
     pub fn new(red_decider: RD, black_decider: BD) -> Game<RD, BD> {
         Self {
             red_decider,

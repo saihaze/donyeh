@@ -62,9 +62,7 @@ impl Board {
     /// 判断走子是否合法并走子
     pub fn apply_move(&mut self, mov: &Move) -> Result<(), ()> {
         if self.check_move(&mov) {
-            unsafe {
-                self.apply_move_unchecked(&mov);
-            }
+            self.apply_move_unchecked(&mov);
             Ok(())
         } else {
             Err(())
@@ -72,7 +70,7 @@ impl Board {
     }
 
     /// \[不安全\] 走子但不作检查
-    pub unsafe fn apply_move_unchecked(&mut self, mov: &Move) {
+    pub fn apply_move_unchecked(&mut self, mov: &Move) {
         let from = mov.pos_from;
         let to = mov.pos_to;
         // 检查游戏是否结束
@@ -461,7 +459,7 @@ impl Board {
 }
 
 impl Move {
-    /// 构建
+    /// 构造
     pub fn new(pos_from: (i32, i32), pos_to: (i32, i32), turn_into: Option<Piece>) -> Move {
         Move {
             pos_from,
@@ -472,7 +470,7 @@ impl Move {
 }
 
 impl Piece {
-    /// 构建
+    /// 构造
     pub fn new(kind: PieceKind, side: Side) -> Piece {
         Piece { kind, side }
     }
