@@ -448,7 +448,7 @@ impl Board {
             // 获取记录
             let record = self.unmove_records.pop().unwrap();
             // 恢复棋盘
-            self.map[record.pos_0.0 as usize][record.pos_1.1 as usize] = record.piece_0;
+            self.map[record.pos_0.0 as usize][record.pos_0.1 as usize] = record.piece_0;
             self.map[record.pos_1.0 as usize][record.pos_1.1 as usize] = record.piece_1;
             // 恢复游戏状态
             self.finished = false;
