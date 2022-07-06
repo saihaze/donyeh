@@ -64,6 +64,7 @@ impl<E: Evaluator> MaxMinDecider<E> {
                     1.0f32 - beta,
                     1.0f32 - alpha,
                 )?;
+            board.undo_move().unwrap();
             if score > ret {
                 ret = score;
             }
@@ -73,7 +74,6 @@ impl<E: Evaluator> MaxMinDecider<E> {
             if alpha > beta {
                 break;
             }
-            board.undo_move().unwrap();
         }
         Some(ret)
     }
@@ -99,6 +99,7 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
                     alpha,
                     1.0f32,
                 );
+                playground.undo_move().unwrap();
                 match score {
                     Some(score) => {
                         let score = 1.0f32 - score;
@@ -116,7 +117,6 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
                         return ret;
                     }
                 }
-                playground.undo_move().unwrap();
             }
             ret = decision;
         }
