@@ -55,14 +55,15 @@ impl<E: Evaluator> MaxMinDecider<E> {
         let mut ret = 0.0f32;
         for step in board.query_possible_moves_of_side(side) {
             board.apply_move_unchecked(&step);
-            let score = self.max_min_search(
-                board,
-                side.other(),
-                depth - 1,
-                current_node_count,
-                1.0f32 - beta,
-                1.0f32 - alpha,
-            )?;
+            let score = 1.0f32
+                - self.max_min_search(
+                    board,
+                    side.other(),
+                    depth - 1,
+                    current_node_count,
+                    1.0f32 - beta,
+                    1.0f32 - alpha,
+                )?;
             if score > ret {
                 ret = score;
             }
@@ -100,6 +101,7 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
                 );
                 match score {
                     Some(score) => {
+                        let score = 1.0f32 - score;
                         if score > max_score {
                             max_score = score;
                             decision = Some(step);
@@ -110,7 +112,9 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
                             // 写出不规范 evaluator 的就应该命丧当场（狗头）
                         }
                     }
-                    None => { return ret; }
+                    None => {
+                        return ret;
+                    }
                 }
                 playground.undo_move().unwrap();
             }
