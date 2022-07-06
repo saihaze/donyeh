@@ -87,7 +87,7 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
             let mut playground = board.clone();
             let mut decision = None;
             let mut current_node_count = 0;
-            let mut max_score = 0.0f32;
+            let mut max_score = -1.0f32;
             let mut alpha = 0.0f32;
             for step in board.query_possible_moves_of_side(side) {
                 playground.apply_move_unchecked(&step);

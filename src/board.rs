@@ -192,6 +192,16 @@ impl Board {
         }
     }
 
+    /// 构造自定义棋盘
+    pub fn new_custom(map: [[Option<Piece>; 10]; 9]) -> Board {
+        Board {
+            finished: false,
+            map,
+            unmove_records: Vec::new(),
+            winner: None,
+        }
+    }
+
     /// 判断位置是否在棋盘内
     pub fn position_within_board(pos: (i32, i32)) -> bool {
         Board::position_within_range(pos, (0, 0), (8, 9))

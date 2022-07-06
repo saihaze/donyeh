@@ -3,3 +3,6 @@ pub mod decider;
 pub mod evaluator;
 pub mod game;
 pub mod prelude;
+
+#[cfg(test)]
+mod test;
