@@ -5,7 +5,7 @@
 
 use crate::{
     board::{Board, Move, Side},
-    evaluator::{self, Evaluator},
+    evaluator::Evaluator,
 };
 use rand::prelude::*;
 
@@ -91,6 +91,9 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
             let mut alpha = 0.0f32;
             for step in board.query_possible_moves_of_side(side) {
                 playground.apply_move_unchecked(&step);
+                if playground.game_finished() {
+                    return Some(step);
+                }
                 let score = self.max_min_search(
                     &mut playground,
                     side.other(),
