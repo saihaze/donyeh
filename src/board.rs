@@ -82,7 +82,11 @@ impl Board {
                     self.winner = Some(piece_killed.side.other());
                 }
             }
-            None => {}
+            None => {
+                if self.get_step_count() == 600 {
+                    self.finished = true;
+                }
+            }
         }
         // 记录悔棋信息
         let unmove_record = UnmoveRecord {
@@ -150,6 +154,11 @@ impl Board {
     pub fn get_piece_at(&self, pos: (i32, i32)) -> Option<Piece> {
         debug_assert!(pos.0 >= 0 && pos.0 < 9 && pos.1 >= 0 && pos.1 < 10);
         self.map[pos.0 as usize][pos.1 as usize]
+    }
+
+    /// 获取当前步数
+    pub fn get_step_count(&self) -> u32 {
+        self.unmove_records.len() as u32
     }
 
     /// 获取赢家
@@ -452,10 +461,13 @@ impl Board {
             None => {}
         }
         if self.looped() {
-            ret.into_iter().filter(|x| {
-                let record = &self.unmove_records[self.unmove_records.len() - 4];
-                x.pos_from != record.pos_0 && x.pos_to != record.pos_1
-            }).collect::<Vec<Move>>().into_iter()
+            ret.into_iter()
+                .filter(|x| {
+                    let record = &self.unmove_records[self.unmove_records.len() - 4];
+                    x.pos_from != record.pos_0 && x.pos_to != record.pos_1
+                })
+                .collect::<Vec<Move>>()
+                .into_iter()
         } else {
             ret.into_iter()
         }
