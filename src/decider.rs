@@ -35,8 +35,8 @@ impl<E: Evaluator> MaxMinDecider<E> {
         }
     }
 
-    /// 最大最小搜索
-    fn max_min_search(
+    /// 最大搜索
+    fn max_search(
         &self,
         board: &mut Board,
         side: Side,
@@ -55,21 +55,48 @@ impl<E: Evaluator> MaxMinDecider<E> {
         let mut ret = 0.0f32;
         for step in board.query_possible_moves_of_side(side) {
             board.apply_move_unchecked(&step);
-            let score = 1.0f32
-                - self.max_min_search(
-                    board,
-                    side.other(),
-                    depth - 1,
-                    current_node_count,
-                    1.0f32 - beta,
-                    1.0f32 - alpha,
-                )?;
+            let score = self.min_search(board, side, depth - 1, current_node_count, alpha, beta)?;
             board.undo_move().unwrap();
             if score > ret {
                 ret = score;
             }
             if ret > alpha {
                 alpha = ret;
+            }
+            if alpha > beta {
+                break;
+            }
+        }
+        Some(ret)
+    }
+
+    /// 最小搜索
+    fn min_search(
+        &self,
+        board: &mut Board,
+        side: Side,
+        depth: u32,
+        current_node_count: &mut u32,
+        alpha: f32,
+        mut beta: f32,
+    ) -> Option<f32> {
+        *current_node_count += 1;
+        if *current_node_count > self.max_node_count {
+            return None;
+        }
+        if depth == 0 || board.game_finished() {
+            return Some(self.evaluator.evaluate(board, side));
+        }
+        let mut ret = 1.0f32;
+        for step in board.query_possible_moves_of_side(side.other()) {
+            board.apply_move_unchecked(&step);
+            let score = self.max_search(board, side, depth - 1, current_node_count, alpha, beta)?;
+            board.undo_move().unwrap();
+            if score < ret {
+                ret = score;
+            }
+            if ret < beta {
+                beta = ret;
             }
             if alpha > beta {
                 break;
@@ -94,9 +121,9 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
                 if playground.game_finished() {
                     return Some(step);
                 }
-                let score = self.max_min_search(
+                let score = self.min_search(
                     &mut playground,
-                    side.other(),
+                    side,
                     depth - 1,
                     &mut current_node_count,
                     alpha,
