@@ -157,6 +157,24 @@ impl Board {
         self.winner
     }
 
+    /// 检查最后四步是否形成循环
+    pub fn looped(&self) -> bool {
+        let records = &self.unmove_records;
+        if records.len() >= 4 {
+            let len = records.len();
+            records[len - 4].piece_1.is_none()
+                && records[len - 3].piece_1.is_none()
+                && records[len - 2].piece_1.is_none()
+                && records[len - 1].piece_1.is_none()
+                && records[len - 4].pos_0 == records[len - 2].pos_1
+                && records[len - 4].pos_1 == records[len - 2].pos_0
+                && records[len - 3].pos_0 == records[len - 1].pos_1
+                && records[len - 3].pos_1 == records[len - 1].pos_0
+        } else {
+            false
+        }
+    }
+
     /// 按照默认开局构建棋盘
     pub fn new() -> Board {
         let mut map = [[None; 10]; 9];
@@ -433,7 +451,14 @@ impl Board {
             }
             None => {}
         }
-        ret.into_iter()
+        if self.looped() {
+            ret.into_iter().filter(|x| {
+                let record = &self.unmove_records[self.unmove_records.len() - 4];
+                x.pos_from != record.pos_0 && x.pos_to != record.pos_1
+            }).collect::<Vec<Move>>().into_iter()
+        } else {
+            ret.into_iter()
+        }
     }
 
     /// 查询某方的所有走法

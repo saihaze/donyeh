@@ -31,3 +31,34 @@ fn human_behavior_2() {
     let decision = decider.make_decision(&board, Side::Black).unwrap();
     assert!(decision.pos_from == (4, 6) && decision.pos_to == (4, 0));
 }
+
+/// 测试：是否会规避循环
+#[test]
+fn avoid_loop() {
+    let mut board = Board::new();
+    board.apply_move_unchecked(&Move::new(
+        (0, 0),
+        (0, 1),
+        Some(Piece::new(PieceKind::車, Side::Red)),
+    ));
+    board.apply_move_unchecked(&Move::new(
+        (0, 9),
+        (0, 8),
+        Some(Piece::new(PieceKind::車, Side::Black)),
+    ));
+    board.apply_move_unchecked(&Move::new(
+        (0, 1),
+        (0, 0),
+        Some(Piece::new(PieceKind::車, Side::Red)),
+    ));
+    board.apply_move_unchecked(&Move::new(
+        (0, 8),
+        (0, 9),
+        Some(Piece::new(PieceKind::車, Side::Black)),
+    ));
+    assert!(!board.check_move(&Move::new(
+        (0, 0),
+        (0, 1),
+        Some(Piece::new(PieceKind::車, Side::Red)),
+    )));
+}
