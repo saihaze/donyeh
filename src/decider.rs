@@ -133,7 +133,6 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
                 playground.undo_move().unwrap();
                 match score {
                     Some(score) => {
-                        let score = 1.0f32 - score;
                         if score > max_score {
                             max_score = score;
                             decision = Some(step);
