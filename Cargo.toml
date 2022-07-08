@@ -1,6 +1,7 @@
 [package]
 name = "donyeh"
 version = "0.1.0"
+description = "一个小型中国象棋库"
 edition = "2021"
 license = "LGPL-3.0-only"
 
