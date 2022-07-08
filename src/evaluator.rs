@@ -30,10 +30,10 @@ impl SimpleEvaluator {
                 PieceKind::炮 => 50, 
                 PieceKind::相 => 30,
                 PieceKind::仕 => 30,
-                PieceKind::中兵 => 20,
-                PieceKind::濟兵 => 20,
+                PieceKind::中兵 => 25,
+                PieceKind::濟兵 => 25,
                 PieceKind::庶兵 => 20,
-                PieceKind::底兵 => 20,
+                PieceKind::底兵 => 15,
             }
             None => 0,
         }
