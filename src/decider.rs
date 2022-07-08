@@ -115,6 +115,7 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
             let mut decision = None;
             let mut current_node_count = 0;
             let mut max_score = -1.0f32;
+            let mut random_value = 0.0f32;
             let mut alpha = 0.0f32;
             for step in board.query_possible_moves_of_side(side) {
                 playground.apply_move_unchecked(&step);
@@ -136,11 +137,18 @@ impl<E: Evaluator> Decider for MaxMinDecider<E> {
                         if score > max_score {
                             max_score = score;
                             decision = Some(step);
+                            random_value = random();
                             if max_score > alpha {
                                 alpha = max_score;
                             }
                             // alpha 不可能大于 beta
                             // 写出不规范 evaluator 的就应该命丧当场（狗头）
+                        } else if score == max_score {
+                            let new_random_value = random();
+                            if new_random_value > random_value {
+                                decision = Some(step);
+                                random_value = new_random_value;
+                            }
                         }
                     }
                     None => {
