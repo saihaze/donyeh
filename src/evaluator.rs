@@ -65,7 +65,7 @@ impl Evaluator for SimpleEvaluator {
     fn evaluate(&self, board: &Board, side: Side) -> f32 {
         let mut sum = 0;
         let mut side_sum = 0;
-        if board.query_piece_count_between((0, 0), (8, 9)) > 14 {
+        if board.get_piece_count() > 14 {
             for x in 0..9 {
                 for y in 0..10 {
                     let piece = board.get_piece_at((x, y));

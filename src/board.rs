@@ -8,6 +8,7 @@
 pub struct Board {
     finished: bool,
     map: [[Option<Piece>; 10]; 9],
+    piece_count: u32,
     unmove_records: Vec<UnmoveRecord>,
     winner: Option<Side>,
 }
@@ -95,7 +96,11 @@ impl Board {
             pos_1: mov.pos_to,
             piece_1: self.get_piece_at(mov.pos_to),
         };
-        self.unmove_records.push(unmove_record);
+        self.unmove_records.push(unmove_record.clone());
+        // 更新棋子个数
+        if unmove_record.piece_1.is_some() {
+            self.piece_count -= 1;
+        }
         // 更新棋盘数据
         self.map[from.0 as usize][from.1 as usize] = None;
         self.map[to.0 as usize][to.1 as usize] = mov.turn_into;
@@ -156,6 +161,11 @@ impl Board {
         self.map[pos.0 as usize][pos.1 as usize]
     }
 
+    /// 获取整个棋盘棋子总个数
+    pub fn get_piece_count(&self) -> u32 {
+        self.piece_count
+    }
+
     /// 获取当前步数
     pub fn get_step_count(&self) -> u32 {
         self.unmove_records.len() as u32
@@ -214,6 +224,7 @@ impl Board {
         Board {
             finished: false,
             map,
+            piece_count: 32,
             unmove_records: Vec::new(),
             winner: None,
         }
@@ -221,11 +232,19 @@ impl Board {
 
     /// 构造自定义棋盘
     pub fn new_custom(map: [[Option<Piece>; 10]; 9]) -> Board {
-        Board {
+        let ret = Board {
             finished: false,
             map,
+            // 还未统计棋子个数，先设为 0
+            piece_count: 0,
             unmove_records: Vec::new(),
             winner: None,
+        };
+        // 这个时候再更新棋子个数
+        // 我真聪明
+        Board {
+            piece_count: ret.query_piece_count_between((0, 0), (8, 9)),
+            ..ret
         }
     }
 
@@ -500,6 +519,10 @@ impl Board {
             // 恢复游戏状态
             self.finished = false;
             self.winner = None;
+            // 恢复棋子个数
+            if record.piece_1.is_some() {
+                self.piece_count += 1;
+            }
             Ok(())
         }
     }
